@@ -1,4 +1,4 @@
-const { BN, expectEvent, shouldFail, balance } = require('openzeppelin-test-helpers');
+const { BN, expectEvent, expectRevert, balance } = require('openzeppelin-test-helpers');
 
 const ERC721Mock = artifacts.require('./ERC721Mock.sol');
 const ERC721FullEscrow = artifacts.require('./ERC721FullEscrow.sol');
@@ -14,12 +14,12 @@ contract.only('ERC721FullEscrow', accounts => {
     });
 
     it('reverts when amount is zero', async () => {
-      await shouldFail.reverting(this.escrow.activate(tokenId, 0, { from: accounts[0] }));
+      await expectRevert.unspecified(this.escrow.activate(tokenId, 0, { from: accounts[0] }));
     });
 
     it('reverts when escrow not exist', async () => {
       tokenId = new BN('298');
-      await shouldFail.reverting(this.escrow.activate(tokenId, 1, { from: accounts[0] }));
+      await expectRevert.unspecified(this.escrow.activate(tokenId, 1, { from: accounts[0] }));
     });
 
     it('reverts when executes by not owner', async () => {
@@ -28,7 +28,7 @@ contract.only('ERC721FullEscrow', accounts => {
       (await this.token.ownerOf(tokenId)).should.equal(accounts[0]);
       await this.token.safeTransferFrom(accounts[0], this.escrow.address, tokenId);
 
-      await shouldFail.reverting(this.escrow.activate(tokenId, 1, { from: accounts[1] }));
+      await expectRevert.unspecified(this.escrow.activate(tokenId, 1, { from: accounts[1] }));
     });
 
     it('reverts when state is not init', async () => {
@@ -38,7 +38,7 @@ contract.only('ERC721FullEscrow', accounts => {
       await this.token.safeTransferFrom(accounts[0], this.escrow.address, tokenId);
       await this.escrow.activate(tokenId, 100, { from: accounts[0] });
 
-      await shouldFail.reverting(this.escrow.activate(tokenId, 1, { from: accounts[0] }));
+      await expectRevert.unspecified(this.escrow.activate(tokenId, 1, { from: accounts[0] }));
     });
 
     it('should activate', async () => {
@@ -65,7 +65,7 @@ contract.only('ERC721FullEscrow', accounts => {
 
     it('reverts when escrow not exist', async () => {
       tokenId = new BN('812');
-      await shouldFail.reverting(this.escrow.destruct(tokenId, { from: accounts[0] }));
+      await expectRevert.unspecified(this.escrow.destruct(tokenId, { from: accounts[0] }));
     });
 
     it('reverts when executes by not owner', async () => {
@@ -74,7 +74,7 @@ contract.only('ERC721FullEscrow', accounts => {
       (await this.token.ownerOf(tokenId)).should.equal(accounts[0]);
       await this.token.safeTransferFrom(accounts[0], this.escrow.address, tokenId);
 
-      await shouldFail.reverting(this.escrow.destruct(tokenId, { from: accounts[1] }));
+      await expectRevert.unspecified(this.escrow.destruct(tokenId, { from: accounts[1] }));
     });
 
     it('reverts when escrow funded', async () => {
@@ -85,7 +85,7 @@ contract.only('ERC721FullEscrow', accounts => {
       await this.escrow.activate(tokenId, 1000, { from: accounts[0] });
       await this.escrow.fund(tokenId, { from: accounts[1], value: 1000 });
 
-      await shouldFail.reverting(this.escrow.destruct(tokenId, { from: accounts[1] }));
+      await expectRevert.unspecified(this.escrow.destruct(tokenId, { from: accounts[1] }));
     });
 
     it('withdraw when escrow is not active yet', async () => {
@@ -139,7 +139,7 @@ contract.only('ERC721FullEscrow', accounts => {
 
     it('reverts when escrow not exist', async () => {
       tokenId = new BN('812');
-      await shouldFail.reverting(this.escrow.fund(tokenId, { from: accounts[0], value: 1 }));
+      await expectRevert.unspecified(this.escrow.fund(tokenId, { from: accounts[0], value: 1 }));
     });
 
     it('reverts when owner funds', async () => {
@@ -148,7 +148,7 @@ contract.only('ERC721FullEscrow', accounts => {
       (await this.token.ownerOf(tokenId)).should.equal(accounts[0]);
       await this.token.safeTransferFrom(accounts[0], this.escrow.address, tokenId, { from: accounts[0] });
 
-      await shouldFail.reverting(this.escrow.fund(tokenId, { from: accounts[0], value: 1 }));
+      await expectRevert.unspecified(this.escrow.fund(tokenId, { from: accounts[0], value: 1 }));
     });
 
     it('reverts when state is not active', async () => {
@@ -157,7 +157,7 @@ contract.only('ERC721FullEscrow', accounts => {
       (await this.token.ownerOf(tokenId)).should.equal(accounts[0]);
       await this.token.safeTransferFrom(accounts[0], this.escrow.address, tokenId, { from: accounts[0] });
 
-      await shouldFail.reverting(this.escrow.fund(tokenId, { from: accounts[1], value: 1 }));
+      await expectRevert.unspecified(this.escrow.fund(tokenId, { from: accounts[1], value: 1 }));
     });
 
     it('reverts when amount is not match', async () => {
@@ -167,7 +167,7 @@ contract.only('ERC721FullEscrow', accounts => {
       await this.token.safeTransferFrom(accounts[0], this.escrow.address, tokenId, { from: accounts[0] });
       await this.escrow.activate(tokenId, 1000, { from: accounts[0] });
 
-      await shouldFail.reverting(this.escrow.fund(tokenId, { from: accounts[1], value: 1 }));
+      await expectRevert.unspecified(this.escrow.fund(tokenId, { from: accounts[1], value: 1 }));
     });
 
     it('should fund', async () => {

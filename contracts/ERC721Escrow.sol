@@ -39,4 +39,6 @@ contract ERC721Escrow is IERC721Escrow {
         _token.safeTransferFrom(address(this), msg.sender, tokenId);
         emit Withdrawn(to, tokenId);
     }
+
+    // TODO: fallback
 }
